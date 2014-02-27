@@ -12,6 +12,7 @@
     res.title = book.title;
     res.format = book.format.name;
     res.publishDate = book.publishDate;
+    res.details_url = book.details_url;
 
     // books.authors can be undefined
     var authors = book.authors || [];
