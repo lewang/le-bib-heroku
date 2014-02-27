@@ -10,6 +10,7 @@
   function transformBook(book) {
     var res = {};
     res.title = book.title;
+    res.sub_title = book.sub_title;
     res.format = book.format.name;
     res.publishDate = book.publishDate;
     res.details_url = book.details_url;
@@ -52,6 +53,22 @@
   var booksSource   = $("#books-handlebars").html();
   var booksTemplate = Handlebars.compile(booksSource);
 
+  function sorterGenerator (sortField) {
+    return function (a, b) {
+      if (a[sortField] < b[sortField]) {
+        return -1;
+      } else if (a[sortField] > b[sortField]) {
+        return 1;
+      } else {
+        if (sortField == "title") {
+          return sorterGenerator("sub_title")(a, b);
+        } else {
+          return 0;
+        };
+      };
+    };
+  }
+
   function sortChangeHandler() {
 
     var $target = $(this);
@@ -70,15 +87,7 @@
         sortField = sortField.toLowerCase();
       };
 
-      transformedBooks = transformedBooks.sort(function (a, b) {
-        if (a[sortField] < b[sortField]) {
-          return -1;
-        } else if (a[sortField] > b[sortField]) {
-          return 1;
-        } else {
-          return 0;
-        };
-      });
+      transformedBooks = transformedBooks.sort(sorterGenerator(sortField));
 
       var html = booksTemplate({books: transformedBooks});
       $("#books-listings").empty().append(html);
