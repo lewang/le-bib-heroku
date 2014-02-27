@@ -1,0 +1,28 @@
+<script id="books-handlebars" type="text/x-handlebars-template">
+  {{#each books}}
+  {{> book}}
+  {{/each}}
+</script>
+
+<script id="book-handlebars" type="text/x-handlebars-template">
+  <div class="book-listing">
+    <hr>
+    <div class="jacket">
+      <img src="{{jacket}}" alt="">
+    </div>
+    <div class="info">
+      <h4>{{title}}</h4>
+      <div>By {{author}}</div>
+      <div>({{format}} {{publishDate}})</div>
+      <div class="{{availabilityClass}}">{{availability.name}}</div>
+    </div>
+  </div>
+</script>
+
+
+<h3>
+  <%= label_tag "sort", "Sort by:" %><%= select_tag(:sort, options_for_select(["Title", "Format", "Author", "Availability"])) %>
+</h3>
+
+<div id="books-listing">
+</div>

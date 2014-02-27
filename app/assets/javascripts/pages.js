@@ -3,3 +3,90 @@
 
 //= require handlebars
 //= require jquery.blockUI
+(function () {
+
+  var booksUrl = "http://s3.amazonaws.com/bibliocommons-interview/books.json";
+
+  function transformBook(book) {
+    var res = {};
+    res.title = book.title;
+    res.format = book.format.name;
+    res.publishDate = book.publishDate;
+
+    // books.authors can be undefined
+    var authors = book.authors || [];
+    res.author = authors.map(function (author) {
+      return author.name;
+    }).join(", ");
+
+    res.availability = book.availability;
+    if (book.availability.id == "AVAILABLE") {
+      res.availabilityClass = "available";
+    } else if (book.availability.id == "UNAVAILABLE") {
+      res.availabilityClass = "unavailable";
+    } else {
+      res.availabilityClass = "unknown";
+    };
+
+    res.jacket = book.image;
+
+    return res;
+  }
+
+  // block and unblock UI to show progress
+  $(document).ajaxStart(function () {
+    $.blockUI();
+  });
+  $(document).ajaxStop(function () {
+    $.unblockUI();
+  });
+  $(document).ajaxError(function (foo) {
+    alert("error!: " + foo);
+  });
+
+  var bookSource   = $("#book-handlebars").html();
+  Handlebars.registerPartial("book", bookSource);
+
+
+  var booksSource   = $("#books-handlebars").html();
+  var booksTemplate = Handlebars.compile(booksSource);
+
+  function sortChangeHandler() {
+
+    var $target = $(this);
+
+    // get new json incase results changed
+    $.getJSON(booksUrl, function (books) {
+      var transformedBooks = books.map(function (book) {
+        return transformBook(book);
+      });
+
+      // sort according to selected field
+      var sortField = $target.val();
+      if (sortField == "Availability") {
+        sortField = 'availabilityClass';
+      } else {
+        sortField = sortField.toLowerCase();
+      };
+
+      transformedBooks = transformedBooks.sort(function (a, b) {
+        if (a[sortField] < b[sortField]) {
+          return -1;
+        } else if (a[sortField] > b[sortField]) {
+          return 1;
+        } else {
+          return 0;
+        };
+      });
+
+      var html = booksTemplate({books: transformedBooks});
+      $("#books-listing").empty().append(html);
+
+    });
+
+  }
+  $("#sort").change(sortChangeHandler);
+
+  $("#sort").trigger("change");
+
+})();

@@ -3,6 +3,8 @@ BibHeroku::Application.routes.draw do
 
   root 'pages#welcome'
 
+  get '/biblio_toy' => 'pages#biblio_toy'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
