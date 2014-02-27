@@ -3,16 +3,29 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 
-.book-listing .info {
-  .available {
-    color: green;
+.book-listing
+{
+  hr {
+    clear: both;
   }
+  .jacket {
+    float:left;
+  }
+  .info {
 
-  .unavailable {
-    color: red;
-  }
+    h4 {
+      margin: 0;
+    }
+   .available {
+     color: green;
+   }
 
-  .unknown {
-    color: yellow;
-  }
+   .unavailable {
+     color: red;
+   }
+
+   .unknown {
+     color: yellow;
+   }
+ }
 }

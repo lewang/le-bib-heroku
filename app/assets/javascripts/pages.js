@@ -80,7 +80,7 @@
       });
 
       var html = booksTemplate({books: transformedBooks});
-      $("#books-listing").empty().append(html);
+      $("#books-listings").empty().append(html);
 
     });
 
