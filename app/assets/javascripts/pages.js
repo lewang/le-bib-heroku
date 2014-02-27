@@ -3,9 +3,20 @@
 
 //= require handlebars
 //= require jquery.blockUI
+
 (function () {
 
   var booksUrl = "http://s3.amazonaws.com/bibliocommons-interview/books.json";
+
+  Handlebars.registerHelper('availabilityClass', function (options) {
+    if (this.availability.id == "AVAILABLE") {
+      return "available";
+    } else if (this.availability.id == "UNAVAILABLE") {
+      return "unavailable";
+    } else {
+      return "unknown";
+    };
+  });
 
   function transformBook(book) {
     var res = {};
@@ -22,14 +33,6 @@
     }).join(", ");
 
     res.availability = book.availability;
-    if (book.availability.id == "AVAILABLE") {
-      res.availabilityClass = "available";
-    } else if (book.availability.id == "UNAVAILABLE") {
-      res.availabilityClass = "unavailable";
-    } else {
-      res.availabilityClass = "unknown";
-    };
-
     res.jacket = book.image;
 
     return res;
