@@ -3,9 +3,20 @@
 
 //= require handlebars
 //= require jquery.blockUI
+
 (function () {
 
   var booksUrl = "http://s3.amazonaws.com/bibliocommons-interview/books.json";
+
+  Handlebars.registerHelper('availabilityClass', function (options) {
+    if (this.availability.id == "AVAILABLE") {
+      return "available";
+    } else if (this.availability.id == "UNAVAILABLE") {
+      return "unavailable";
+    } else {
+      return "unknown";
+    };
+  });
 
   function transformBook(book) {
     var res = {};
@@ -22,14 +33,6 @@
     }).join(", ");
 
     res.availability = book.availability;
-    if (book.availability.id == "AVAILABLE") {
-      res.availabilityClass = "available";
-    } else if (book.availability.id == "UNAVAILABLE") {
-      res.availabilityClass = "unavailable";
-    } else {
-      res.availabilityClass = "unknown";
-    };
-
     res.jacket = book.image;
 
     return res;
@@ -55,17 +58,26 @@
 
   function sorterGenerator (sortField) {
     return function (a, b) {
-      if (a[sortField] < b[sortField]) {
-        return -1;
-      } else if (a[sortField] > b[sortField]) {
-        return 1;
+      var aVal, bVal;
+      if (sortField == "availability") {
+        aVal = a.availability.id;
+        bVal = b.availability.id;
+
+      } else if (sortField == "title"){
+        aVal = a['title'] + (a['sub_title'] || "");
+        bVal = b['title'] + (b['sub_title'] || "");
       } else {
-        if (sortField == "title") {
-          return sorterGenerator("sub_title")(a, b);
-        } else {
-          return 0;
-        };
+        aVal = a[sortField];
+        bVal = b[sortField];
       };
+
+      if (aVal > bVal) {
+        return 1;
+      } else if (aVal < bVal) {
+        return -1;
+      } else {
+        return 0;
+      }
     };
   }
 
@@ -81,11 +93,7 @@
 
       // sort according to selected field
       var sortField = $target.val();
-      if (sortField == "Availability") {
-        sortField = 'availabilityClass';
-      } else {
-        sortField = sortField.toLowerCase();
-      };
+      sortField = sortField.toLowerCase();
 
       transformedBooks = transformedBooks.sort(sorterGenerator(sortField));
 
