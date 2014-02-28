@@ -2,12 +2,14 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#sort-options {
+  float: right;
+  padding-right: 30px;
+}
 
 .book-listing
 {
-  hr {
-    clear: both;
-  }
+  clear: both;
   .jacket {
     float:left;
   }
